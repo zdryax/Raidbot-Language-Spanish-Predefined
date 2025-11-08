@@ -1,6 +1,6 @@
 # RaidBot Spanish Predefined
 
-![](https://raw.githubusercontent.com/Raidbot-Language-Spanish-Predefined/Commands.png)
+![](https://raw.githubusercontent.com/zleckix/Raidbot-Language-Spanish-Predefined/Commands.png)
 
 ### `Comandos:`
 

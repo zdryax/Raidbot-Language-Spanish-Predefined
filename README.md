@@ -1,7 +1,5 @@
 # RaidBot Spanish Predefined
 
-![](https://raw.githubusercontent.com/zleckix/Raidbot-Language-Spanish-Predefined/Commands.png)
-
 ### `Comandos:`
 
 **Clear All**
